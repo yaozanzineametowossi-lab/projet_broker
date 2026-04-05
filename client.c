@@ -199,7 +199,7 @@ int main(void) {
             continue;
         }
 
-        /* Verifier les fonds avant d'envoyer un ordre d'achat */
+       /* Verifier les fonds avant d'envoyer un ordre d'achat */
         if (strncmp(buffer_envoi, "ACHAT ", 6) == 0) {
             char nom[32];
             int  qte;
