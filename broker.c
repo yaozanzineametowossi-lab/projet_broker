@@ -91,7 +91,7 @@ int trouver_produit(const char *nom) {
 }
 
 /* ------------------------------------------------------------------ */
-/* Envoie la liste de tous les produits disponibles au client          */
+/* IZIDINE : Envoie la liste de tous les produits disponibles au client */
 /* ------------------------------------------------------------------ */
 void envoyer_catalogue(int client_socket) {
     char reponse[BUFFER_SIZE];
@@ -114,7 +114,7 @@ void envoyer_catalogue(int client_socket) {
 }
 
 /* ------------------------------------------------------------------ */
-/* Traite la demande d'info sur un produit specifique                  */
+/* IZIDINE : Traite la demande d'info sur un produit specifique         */
 /* ------------------------------------------------------------------ */
 void traiter_info(int client_socket, const char *nom_produit) {
     char reponse[BUFFER_SIZE];
