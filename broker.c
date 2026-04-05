@@ -144,7 +144,6 @@ void traiter_achat(int client_socket, const char *nom_produit, int quantite) {
     char reponse[BUFFER_SIZE];
     char log_msg[256];
     int idx = trouver_produit(nom_produit);
-
     if (idx == -1) {
         snprintf(reponse, sizeof(reponse),
                  "Produit '%s' introuvable.\n", nom_produit);
@@ -166,7 +165,7 @@ void traiter_achat(int client_socket, const char *nom_produit, int quantite) {
         return;
     }
 
-    /* Validation de l'achat */
+    /* Validation de l'achat  ...*/
     float montant = quantite * catalogue[idx].prix;
     catalogue[idx].quantite_broker -= quantite;
     catalogue[idx].fonds_broker    += montant;
@@ -237,7 +236,7 @@ void traiter_vente(int client_socket, const char *nom_produit, int quantite) {
 }
 
 /* ------------------------------------------------------------------ */
-/* Envoie l'aide (liste des commandes disponibles) au client           */
+/* Envoie l'aide(liste des commandes disponibles) au client           */
 /* ------------------------------------------------------------------ */
 void envoyer_aide(int client_socket) {
     char aide[] =
