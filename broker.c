@@ -95,6 +95,7 @@ int trouver_produit(const char *nom) {
 /* ------------------------------------------------------------------ */
 void envoyer_catalogue(int client_socket) {
     char reponse[BUFFER_SIZE];
+    //Un plus petit tableau qui sert de variable temporaire pour construire le texte d'un seul produit à la fois avant de l'ajouter dans reponse
     char ligne[128];
     int i;
 
@@ -256,17 +257,22 @@ void envoyer_aide(int client_socket) {
 /* Gestion d'un client : boucle de reception/traitement des messages   */
 /* Cette fonction est appelee dans le processus fils (fork)            */
 /* ------------------------------------------------------------------ */
-void gerer_client(int client_socket, struct sockaddr_in client_addr) {
+void gerer_client(int client_socket, struct sockaddr_in client_addr, int client_id) {
     char buffer[BUFFER_SIZE];
     char log_msg[256];
     int  octets_recus;
 
     char ip_client[INET_ADDRSTRLEN];
+    char id_client[64];
     inet_ntop(AF_INET, &client_addr.sin_addr, ip_client, INET_ADDRSTRLEN);
+    
+    /* Format : Client X (IP:PORT) */
+    snprintf(id_client, sizeof(id_client), "Client %d (%s:%d)", 
+             client_id, ip_client, ntohs(client_addr.sin_port));
 
     snprintf(log_msg, sizeof(log_msg),
-             "Nouveau client connecte : %s:%d",
-             ip_client, ntohs(client_addr.sin_port));
+             "Nouveau client connecte : %s",
+             id_client);
     ecrire_log(log_msg);
 
     /* Message de bienvenue */
@@ -283,8 +289,8 @@ void gerer_client(int client_socket, struct sockaddr_in client_addr) {
         if (octets_recus <= 0) {
             /* Client deconnecte ou erreur reseau */
             snprintf(log_msg, sizeof(log_msg),
-                     "Client deconnecte : %s:%d",
-                     ip_client, ntohs(client_addr.sin_port));
+                     "Client deconnecte : %s",
+                     id_client);
             ecrire_log(log_msg);
             break;
         }
@@ -293,7 +299,7 @@ void gerer_client(int client_socket, struct sockaddr_in client_addr) {
         buffer[strcspn(buffer, "\r\n")] = '\0';
 
         snprintf(log_msg, sizeof(log_msg),
-                 "Commande recue de %s : '%.80s'", ip_client, buffer);
+                 "Commande recue de %s : '%.80s'", id_client, buffer);
         ecrire_log(log_msg);
 
         /* Analyse de la commande recue */
@@ -330,7 +336,7 @@ void gerer_client(int client_socket, struct sockaddr_in client_addr) {
             char msg[] = "Au revoir !\n";
             send(client_socket, msg, strlen(msg), 0);
             snprintf(log_msg, sizeof(log_msg),
-                     "Client %s a envoye QUITTER.", ip_client);
+                     "Client %s a envoye QUITTER.", id_client);
             ecrire_log(log_msg);
             break;
 
@@ -359,6 +365,7 @@ int main(void) {
     struct sockaddr_in server_addr, client_addr;
     socklen_t client_addr_len = sizeof(client_addr);
     pid_t pid;
+    int compteur_clients = 0;
 
     /* Gestion des processus fils */
     signal(SIGCHLD, nettoyer_fils);
@@ -411,6 +418,9 @@ int main(void) {
             continue;
         }
 
+        /* Incremente le numero pour ce nouveau client */
+        compteur_clients++;
+
         /* Creer un processus fils pour gerer ce client */
         pid = fork();
 
@@ -421,7 +431,7 @@ int main(void) {
         } else if (pid == 0) {
             /* Processus fils : gere le client */
             close(server_socket);
-            gerer_client(client_socket, client_addr);
+            gerer_client(client_socket, client_addr, compteur_clients);
             exit(EXIT_SUCCESS);
 
         } else {
