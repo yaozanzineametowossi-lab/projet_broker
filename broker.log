@@ -1,0 +1,11 @@
+[2026-04-07 06:58:30] Demarrage du serveur Broker...
+[2026-04-07 06:58:30] Broker en attente de connexions sur le port 8080...
+[2026-04-07 06:59:09] Nouveau client connecte : 127.0.0.1:46206
+[2026-04-07 06:59:55] Commande recue de 127.0.0.1 : 'CATALOGUE'
+[2026-04-07 07:00:07] Commande recue de 127.0.0.1 : 'INFO APPLE'
+[2026-04-07 07:00:26] Commande recue de 127.0.0.1 : 'ACHAT APPLE 200'
+[2026-04-07 07:00:47] Commande recue de 127.0.0.1 : 'ACHAT -100'
+[2026-04-07 07:01:06] Commande recue de 127.0.0.1 : 'ACHAT APPLE 50'
+[2026-04-07 07:01:06] ACHAT : 50 x APPLE (montant=9125.00)
+[2026-04-07 09:53:15] Commande recue de 127.0.0.1 : 'catalogue'
+[2026-04-07 09:53:21] Commande recue de 127.0.0.1 : 'CATALOGUE'

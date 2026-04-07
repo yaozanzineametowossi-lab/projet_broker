@@ -125,14 +125,20 @@ void afficher_menu_local(void) {
 /* ------------------------------------------------------------------ */
 /* Point d'entree principal                                            */
 /* ------------------------------------------------------------------ */
-int main(void) {
+int main(int argc, char *argv[]) {
     int    client_socket;
     struct sockaddr_in server_addr;
     char   buffer_envoi[BUFFER_SIZE];
     char   buffer_recep[BUFFER_SIZE];
     int    octets_recus;
+    const char *server_ip = SERVER_IP; /* Par defaut 127.0.0.1 */
 
-    printf("Connexion au broker %s:%d...\n", SERVER_IP, PORT);
+    /* Si une IP est passee en parametre, on l'utilise */
+    if (argc > 1) {
+        server_ip = argv[1];
+    }
+
+    printf("Connexion au broker %s:%d...\n", server_ip, PORT);
 
     /* 1. Creation de la socket TCP */
     client_socket = socket(AF_INET, SOCK_STREAM, 0);
@@ -145,7 +151,7 @@ int main(void) {
     server_addr.sin_family = AF_INET;
     server_addr.sin_port   = htons(PORT);
 
-    if (inet_pton(AF_INET, SERVER_IP, &server_addr.sin_addr) <= 0) {
+    if (inet_pton(AF_INET, server_ip, &server_addr.sin_addr) <= 0) {
         perror("Adresse IP invalide");
         close(client_socket);
         exit(EXIT_FAILURE);
